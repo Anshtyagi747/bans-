@@ -42,8 +42,8 @@ def save_product_image(file):
     return f"uploads/products/{filename}"
 
 
-@admin_bp.route("/login", methods=["GET", "POST"])
 
+@admin_bp.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated and current_user.is_admin:
         return redirect(url_for("admin.dashboard"))
@@ -53,35 +53,34 @@ def login():
         password = request.form.get("password", "")
 
         # Temporary demo login
-        # Temporary demo admin login
-if email == "demo@bans.com" and password == "BANSdemo123":
+        if email == "demo@bans.com" and password == "BANSdemo123":
+            user = User.query.filter_by(email="demo@bans.com").first()
 
-    user = User.query.filter_by(email="demo@bans.com").first()
+            if not user:
+                existing_admin = User.query.filter_by(is_admin=True).first()
 
-    if not user:
-        existing_admin = User.query.filter_by(is_admin=True).first()
+                if existing_admin:
+                    flash("An admin account already exists.", "error")
+                    return redirect(url_for("admin.login"))
 
-        if existing_admin:
-            flash("An admin account already exists. Demo account creation disabled.", "error")
-            return redirect(url_for("admin.login"))
+                user = User(
+                    name="BANS Demo Admin",
+                    email="demo@bans.com",
+                    password_hash=generate_password_hash("BANSdemo123"),
+                    is_admin=True
+                )
 
-        user = User(
-            name="BANS Demo Admin",
-            email="demo@bans.com",
-            password_hash=generate_password_hash("BANSdemo123"),
-            is_admin=True
-        )
+                db.session.add(user)
+                db.session.commit()
 
-        db.session.add(user)
-        db.session.commit()
+            if not user.is_admin:
+                flash("This account is not an administrator.", "error")
+                return redirect(url_for("admin.login"))
 
-    if not user.is_admin:
-        flash("This account is not an administrator.", "error")
-        return redirect(url_for("admin.login"))
+            login_user(user)
+            return redirect(url_for("admin.dashboard"))
 
-    login_user(user)
-    return redirect(url_for("admin.dashboard"))
-
+        # Normal admin login
         user = User.query.filter_by(email=email, is_admin=True).first()
 
         if user and check_password_hash(user.password_hash, password):
@@ -97,6 +96,7 @@ if email == "demo@bans.com" and password == "BANSdemo123":
         flash("Administrator email or password is incorrect.", "error")
 
     return render_template("admin/login.html")
+
 
 @admin_bp.route("/")
 @login_required
