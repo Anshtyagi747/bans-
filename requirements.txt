@@ -10,3 +10,4 @@ cryptography>=42.0,<46.0
 Flask
 Flask-SQLAlchemy
 gunicorn
+setuptools<81
