@@ -43,22 +43,40 @@ def save_product_image(file):
 
 
 @admin_bp.route("/login", methods=["GET", "POST"])
+
 def login():
     if current_user.is_authenticated and current_user.is_admin:
         return redirect(url_for("admin.dashboard"))
+
     if request.method == "POST":
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
+
+        # Temporary demo login
+        if email == "demo@bans.com" and password == "BANSdemo123":
+            user = User.query.filter_by(is_admin=True).first()
+
+            if user:
+                login_user(user)
+                return redirect(url_for("admin.dashboard"))
+
+            flash("No admin account exists in the database.", "error")
+            return redirect(url_for("admin.login"))
+
         user = User.query.filter_by(email=email, is_admin=True).first()
+
         if user and check_password_hash(user.password_hash, password):
             login_user(user)
             target = request.args.get("next", "")
-            # Only allow local admin URLs as a post-login destination.
             parsed = urlparse(target)
+
             if target.startswith("/admin/") and not parsed.netloc:
                 return redirect(target)
+
             return redirect(url_for("admin.dashboard"))
+
         flash("Administrator email or password is incorrect.", "error")
+
     return render_template("admin/login.html")
 
 @admin_bp.route("/")
