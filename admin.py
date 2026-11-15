@@ -53,15 +53,34 @@ def login():
         password = request.form.get("password", "")
 
         # Temporary demo login
-        if email == "demo@bans.com" and password == "BANSdemo123":
-            user = User.query.filter_by(is_admin=True).first()
+        # Temporary demo admin login
+if email == "demo@bans.com" and password == "BANSdemo123":
 
-            if user:
-                login_user(user)
-                return redirect(url_for("admin.dashboard"))
+    user = User.query.filter_by(email="demo@bans.com").first()
 
-            flash("No admin account exists in the database.", "error")
+    if not user:
+        existing_admin = User.query.filter_by(is_admin=True).first()
+
+        if existing_admin:
+            flash("An admin account already exists. Demo account creation disabled.", "error")
             return redirect(url_for("admin.login"))
+
+        user = User(
+            name="BANS Demo Admin",
+            email="demo@bans.com",
+            password_hash=generate_password_hash("BANSdemo123"),
+            is_admin=True
+        )
+
+        db.session.add(user)
+        db.session.commit()
+
+    if not user.is_admin:
+        flash("This account is not an administrator.", "error")
+        return redirect(url_for("admin.login"))
+
+    login_user(user)
+    return redirect(url_for("admin.dashboard"))
 
         user = User.query.filter_by(email=email, is_admin=True).first()
 
