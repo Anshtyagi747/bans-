@@ -1,0 +1,1 @@
+{% extends "base.html" %}{% block content %}<section class="page-hero"><p class="eyebrow">SAVED FOR LATER</p><h1>Your <em>wishlist.</em></h1></section><section class="section"><div class="product-grid">{% for p in products %}{% include "_product_card.html" %}{% else %}<p>Your wishlist is waiting to be curated.</p>{% endfor %}</div></section>{% endblock %}

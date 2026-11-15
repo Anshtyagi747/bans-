@@ -1,0 +1,11 @@
+{% extends 'admin/layout.html' %}{% block admin_content %}
+<div class="admin-heading"><div><p class="eyebrow">GATEWAY CONFIGURATION</p><h1>Payment <em>settings.</em></h1><p>Add your Razorpay credentials here. No source-code editing is needed.</p></div></div>
+<section class="admin-panel"><h2>Razorpay credentials</h2><p class="checkout-note">Use Test Mode keys first. Secret fields are encrypted before being saved; existing secrets are never displayed in this page. Leave a secret blank to keep the saved value.</p>
+<form method="post" class="wide-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<label>Razorpay Key ID<input name="razorpay_key_id" placeholder="rzp_test_..." autocomplete="off"></label>
+<label>Razorpay Key Secret<input name="razorpay_key_secret" type="password" placeholder="Enter new key secret" autocomplete="new-password"></label>
+<label>Razorpay Webhook Secret<input name="razorpay_webhook_secret" type="password" placeholder="Enter webhook secret" autocomplete="new-password"></label>
+<label>Gateway mode<select name="razorpay_mode"><option value="test" {% if mode=='test' %}selected{% endif %}>Test mode</option><option value="live" {% if mode=='live' %}selected{% endif %}>Live mode</option></select></label>
+<label class="check-row"><input type="checkbox" name="razorpay_enabled" {% if enabled %}checked{% endif %}> Enable Razorpay checkout</label><button class="btn">Save payment settings</button></form>
+<div class="config-row"><span>Key ID saved</span><b>{{ 'Yes' if key_configured else 'No' }}</b></div><div class="config-row"><span>Key Secret saved</span><b>{{ 'Yes' if secret_configured else 'No' }}</b></div><div class="config-row"><span>Webhook Secret saved</span><b>{{ 'Yes' if webhook_configured else 'No' }}</b></div>
+<p class="checkout-note">Webhook URL to add in Razorpay Dashboard: <code>/payment/webhook</code> on your public domain. Subscribe to <code>payment.captured</code>. Configure HTTPS before live launch. Razorpay must be enabled and valid credentials saved for checkout to work.</p></section>{% endblock %}

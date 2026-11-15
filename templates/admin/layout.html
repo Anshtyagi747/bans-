@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="admin-brand"><span>B BANS</span><small>ADMIN CONTROL ROOM</small></div>
+    <a href="{{ url_for('admin.dashboard') }}">Overview</a>
+    <a href="{{ url_for('admin.products') }}">Products</a>
+    <a href="{{ url_for('admin.categories') }}">Categories</a>
+    <a href="{{ url_for('admin.orders') }}">Orders</a>
+    <a href="{{ url_for('admin.customers') }}">Customers</a>
+    <a href="{{ url_for('admin.inventory') }}">Inventory</a>
+    <a href="{{ url_for('admin.offers') }}">Offers & campaigns</a><a href="{{ url_for('admin.coupons') }}">Coupons</a><a href="{{ url_for('admin.banners') }}">Homepage banners</a><a href="{{ url_for('admin.store_settings') }}">Website & shipping</a>
+    <a href="{{ url_for('admin.payments') }}">Payments</a>
+    <a href="{{ url_for('admin.payment_settings') }}">Payment settings</a>
+    <a href="{{ url_for('admin.reports') }}">Reports</a>
+    <a href="{{ url_for('index') }}" target="_blank">View storefront ↗</a>
+    <form method="post" action="{{ url_for('auth.logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="admin-logout">Sign out</button></form>
+  </aside>
+  <main class="admin-main">{% block admin_content %}{% endblock %}</main>
+</div>
+{% endblock %}
